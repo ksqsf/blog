@@ -14,3 +14,6 @@ highlight_code = true
 
 [slugify]
 paths_keep_dates = true
+
+[extra]
+favicon = "https://avatars.githubusercontent.com/u/23358293"
