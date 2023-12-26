@@ -4,7 +4,7 @@ date = 2023-06-01T17:07:59+08:00
 [taxonomies]
 tags = ["ime", "rime", "double_pinyin"]
 [extra]
-headline = "我能把两种翻译器联用而不伤身体"
+headline = "我能联用两种翻译器而不伤身体"
 math = true
 comment = true
 +++
