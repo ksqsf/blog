@@ -1,0 +1,40 @@
+on: [push]
+
+
+env:
+  ZOLA_VERSION: 0.18.0
+  DEPLOY_USER: deploy
+  DEPLOY_HOST: 146.190.201.54
+  DEPLOY_PATH: /var/www/html/
+
+
+name: Build and deploy on push
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@master
+
+    - name: Build site
+      run: |
+        sudo apt install -y rsync wget
+        wget https://github.com/getzola/zola/releases/download/v${ZOLA_VERSION}/zola-v${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz
+        tar xzvf zola-*.tar.gz
+        chmod +x zola
+        ./zola build
+
+    - name: Set up SSH
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+    - name: Preserve old links
+      run: |
+        cp ./public/atom.xml ./public/index.xml
+
+    - name: Deploy
+      run: |
+        rsync -ravz ./public/ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
