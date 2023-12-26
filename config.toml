@@ -3,7 +3,7 @@ title = "/home/ksqsf"
 compile_sass = true
 build_search_index = true
 generate_feed = true
-# theme = "hyde"
+author = "ksqsf"
 
 taxonomies = [
   { name="tags", feed=true },
@@ -14,7 +14,3 @@ highlight_code = true
 
 [slugify]
 paths_keep_dates = true
-
-[extra]
-favicon = "https://avatars.githubusercontent.com/u/23358293"
-github_link = "https://github.com/ksqsf"

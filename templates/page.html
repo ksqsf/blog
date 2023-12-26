@@ -7,13 +7,31 @@
 {% block head %}
     <!-- Footnote -->
     <script type="text/javascript" id="Footnote" async
-            src={{ get_url(path="lib/footnote.js", trailing_slash=false) }}>
+            src="{{ get_url(path="lib/footnote.js", trailing_slash=false) }}">
     </script>
     {% if page.extra.math %}
         <!-- MathJax -->
         <script type="text/javascript" id="MathJax-script" async
                 src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
         </script>
+    {% endif %}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:url" content="{{ page.permalink }}">
+    <meta property="og:site_name" content="{{ config.title }}">
+    {% if page.summary %}
+        <meta name="description" content="{{ page.summary | striptags | trim }}">
+        <meta name="og:description" content="{{ page.summary | striptags | trim }}">
+    {% endif %}
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:author" content="{{ config.author }}">
+    {% if page.date %}
+        <meta property="article:published_time" content="{{ page.date }}">
+    {% endif %}
+    {% if page.updated %}
+        <meta property="article:modified_time" content="{{ page.updated }}">
     {% endif %}
 {% endblock %}
 
@@ -26,7 +44,7 @@
                 <p class="page-meta">
                     <span itemprop="author name" itemscope itemtype="http://schema.org/Person">ksqsf</span>
                     ・
-                    <time class="dt-published" datetime={{ page.date }} itemprop="datePublished">{{ page.date | date(format="%Y-%m-%d") }}</time>
+                    <time class="dt-published" datetime="{{ page.date }}" itemprop="datePublished">{{ page.date | date(format="%Y-%m-%d") }}</time>
                 </p>
             {% endif %}
         </header>

@@ -8,10 +8,10 @@
             <title>/home/ksqsf</title>
         {% endblock %}
 
-        <link rel="stylesheet" href={{ get_url(path="main.css", trailing_slash=false) }}>
+        <link rel="stylesheet" href="{{ get_url(path="main.css", trailing_slash=false) }}">
 
         <!-- Feed -->
-        <link type="application/atom+xml" rel="alternate" href={{ get_url(path="atom.xml", trailing_slash=false) }} title="/home/ksqsf">
+        <link type="application/atom+xml" rel="alternate" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" title="/home/ksqsf">
 
         {% block head %}
         {% endblock %}
@@ -37,7 +37,7 @@
 
     <footer class="site-footer">
         {% block footer %}
-            <small><a href={{ get_url(path="atom.xml", trailing_slash=false) }}>Feed</a></small>
+            <small><a href="{{ get_url(path="atom.xml", trailing_slash=false) }}">Feed</a></small>
         {% endblock %}
     </footer>
 </html>

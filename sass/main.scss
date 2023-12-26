@@ -277,8 +277,10 @@ main header {
         text-align: left;
         font-weight: bold;
     }
-    th, td {
+    table, th, td {
         padding: 12px 15px;
+        border: 1px solid #aaa;
+        border-collapse: collapse;
     }
 
     // Aside
