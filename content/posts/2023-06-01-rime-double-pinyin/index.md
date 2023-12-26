@@ -1,6 +1,7 @@
 +++
 title = "Rime 双拼折腾记"
 date = 2023-06-01T17:07:59+08:00
+updated = 2023-12-26T22:06:16+08:00
 [taxonomies]
 tags = ["ime", "rime", "double_pinyin"]
 [extra]
@@ -320,6 +321,10 @@ guding:
 - 多音字和容错码问题。假设一个字有 \\(n\\) 个读音，有 \\(m\\) 种辅助码（其中一种是正确的编码，其他 \\(m-1\\) 种是容错码），那么这个字将一共有 \\(nm\\) 个编码。如果某个词有多个这样的字，那么这个词的编码会特别多。
 
 此外，在了解了 Lua 插件的能力之后，我认为实际上在 Rime 中是可以实现真正的「智能辅助码」的，也就是不把辅助码直接附在音码之后写在词典里，而是在运行时动态查询、进行筛选。这需要手动写一个新的翻译器，工程量未知，但我觉得很值得一试。
+
+<aside>
+<p>该想法目前已被实现！<a href="https://github.com/HowcanoeWang/rime-lua-aux-code/">rime-lua-aux-code</a> 通过 <code>lua-filter</code> 实现了动态间接辅助码。我另行实现了<a href="https://github.com/ksqsf/rime-moran/blob/4a927132f7968be0ce3c3282540c148b9645834a/lua/moran_aux_translator.lua">动态直接辅助码</a>。</p>
+</aside>
 
 ## 结语
 
