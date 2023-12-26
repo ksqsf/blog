@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if paginator.current_index > 1 %}
+        <title>/home/ksqsf{{ section.path }}{{ paginator.current_index }}</title>
+    {% else %}
+        <title>/home/ksqsf{{ section.path }}</title>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <article class="post">
+        <header class="post-header">
+            <h1 class="post-title">{{ section.title }}</h1>
+        </header>
+
+        <div class="page-content">
+            {{ section.content | safe }}
+        </div>
+
+        <ul class="post-list">
+            {% for page in paginator.pages %}
+                <li class="post-item" itemscope itemtype="http://schema.org/BlogPosting">
+                    <p><a class="post-link" itemprop="name headline title" href={{ page.permalink }}>{{ page.title }}</a></p>
+                    {% if page.extra.headline %}
+                        <p class="headline" itemprop="description">{{ page.extra.headline }}</p>
+                    {% endif %}
+                    <small class="post-meta">
+                        <time datetime={{ page.date }} itemprop="datePublished">{{ page.date | date(format="%Y-%m-%d") }}</time>
+                        <!-- TODO: category -->
+                    </small>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            {% if paginator.next %}
+                <a class="older" href={{ paginator.next }}> 更早</a>
+            {% endif %}
+            {% if paginator.previous %}
+                <a class="newer" href={{ paginator.previous }}>更晚</a>
+            {% endif %}
+        </div>
+
+    </article>
+{% endblock %}

@@ -1,0 +1,20 @@
+base_url = "https://ksqsf.moe"
+title = "/home/ksqsf"
+compile_sass = true
+build_search_index = true
+generate_feed = true
+# theme = "hyde"
+
+taxonomies = [
+  { name="tags", feed=true },
+]
+
+[markdown]
+highlight_code = true
+
+[slugify]
+paths_keep_dates = true
+
+[extra]
+favicon = "https://avatars.githubusercontent.com/u/23358293"
+github_link = "https://github.com/ksqsf"
