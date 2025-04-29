@@ -3,7 +3,9 @@
 // Font families
 $monospace: Iosevka, Menlo, Consolas, monospace;
 $sans-serif: "PT Sans","Avenir Next","Segoe UI",Helvetica,"Helvetica Neue",Arial,"Han Heiti GB",sans-serif;
-$serif: Martina Plantijn, Charter, "方正FW筑紫明朝R改", ui-serif, serif;
+$serif: Martina Plantijn, Charter, "方正FW筑紫明朝R改",
+        "Noto Sans CJK TC", "Microsoft YaHei", "DengXian",
+        ui-serif, serif;
 
 * {
     box-sizing: border-box;
