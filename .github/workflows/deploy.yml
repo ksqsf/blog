@@ -2,7 +2,7 @@ on: [push]
 
 
 env:
-  ZOLA_VERSION: 0.18.0
+  ZOLA_VERSION: 0.20.0
   DEPLOY_USER: deploy
   DEPLOY_HOST: 146.190.201.54
   DEPLOY_PATH: /var/www/html/
