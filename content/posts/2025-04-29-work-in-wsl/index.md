@@ -250,7 +250,7 @@ LaTeX 编译器可以直接在 Linux 里安装 texlive。阅读就直接用 Wind
 
 并且还可以直接让 PDF 阅读器根据 SyncTeX 信息跳转到源代码！以 SumatraPDF 为例，在 Settings -> Options -> Set inverse search command-line 中，输入如下命令：
 
-```shell
+```bash
 wsl emacsclient -n +%l:%c "$(wslpath '%f')"
 ```
 
@@ -260,7 +260,7 @@ wsl emacsclient -n +%l:%c "$(wslpath '%f')"
 
 我在 `~/.profile` 末尾添加了：
 
-```shell
+```bash
 exec emacs
 ```
 
