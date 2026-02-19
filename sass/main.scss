@@ -117,7 +117,7 @@ code[class^="language-"] {
 // Site Header
 // 
 .site-header {
-    font-family: Iosevka, Menlo, Consolas, monospace;
+    font-family: $monospace;
     margin-bottom: 3rem;
     display: flex;
     align-items: center;
