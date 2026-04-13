@@ -56,33 +56,15 @@ instance {-# OVERLAPPABLE #-} (Functor h, f :< g) => f :< (h :+ g) where
 ```haskell
 -- | 表达式
 data Expr a where
-  Add :: Expr Int -> Expr Int -> Expr Int
-  Lt  :: Expr Int -> Expr Int -> Expr Bool
-(+.) = Add
-(<.) = Sub
+  Lit :: a -> Expr a
 
 -- | 内存地址
 newtype Addr ty = Addr Integer
-
--- | 基本语言
-data BaseF k where
-  If    :: Expr Bool -> k -> k -> k -> BaseF k
-  While :: Expr Bool -> k -> k -> BaseF k
-deriving instance Functor BaseF
 
 -- | 扩展语言 ConcF 提供结构化并发原语
 data ConcF k where
   Fork :: [k] -> k -> ConcF k
 deriving instance Functor ConcF
--- | 表达式
-data Expr a where
-  Add :: Expr Int -> Expr Int -> Expr Int
-  Lt  :: Expr Int -> Expr Int -> Expr Bool
-(+.) = Add
-(<.) = Sub
-
--- | 内存地址
-newtype Addr ty = Addr Integer
 
 -- | 基本语言
 data BaseF k where
@@ -236,9 +218,9 @@ data TestF sig k where
 - 在 Functor 之间可构成序关系 `:<`，较小的 functor 可以注入大 functor；
 - 对任何 Functor 都有相应的 Free monad，这里才是我们实际在用的。
 
-但我们注意到，这个语句/操作/命令/effect里 **必须没有子语句/操作/命令/effect**。换句话说，经典的 DTALC 是一阶的，而无法应对具有「子 effect」的情形。
+但我们注意到，这个语句/操作/命令/effect里 **必须没有子语句/操作/命令/effect**。换句话说，经典的 DTALC 是一阶的，而无法应对具有「子 effect」的情形。这种 effect 里包 effect 的情况就叫 **高阶 effect**，对应地，这里提到的 dtalc 写法就称作 **高阶 dtalc**。这里 `BaseF` 和 `ConcF` 是含有子命令的（高阶 effect），而 `TestF` 没有，所以 `TestF` 是一阶的。
 
-那么问题很显然了，就是 `BaseF` 和 `ConcF` 是含有子命令的，所以我们需要引入某种机制来解决这个问题。我们知道一个结果为 a 的程序/AST依然可以用 functor（甚至 monad）来描述，所以可以直接在这个地方做 open recursion：
+我们知道一个结果为 a 的计算/程序/AST依然可以用 functor（甚至 monad）来描述，所以可以直接在这个地方做 open recursion：
 
 ```haskell
 data BaseF f k where
@@ -250,11 +232,13 @@ data TestF f k where
   AnyIO :: IO () -> k -> TestF f k
 ```
 
-然后定义对应于 Free 的、带有额外 sig 参数的高阶 Free monad，就叫它 HFree 吧：
+然后定义对应于 `Free` 的、带有额外 `sig` 参数的高阶 free monad，就叫它 `HFree` 吧：
 
 ```haskell
 data HFree sig a = HPure a | HImpure (sig (HFree sig) (HFree sig a))
 ```
+
+这里需要注意 `sig` 本身不是 Functor，它的 kind 是 `* -> * -> *`。
 
 同时我们还想继续保留 `(BaseF :< sig, TestF :< sig)` 这种写法，也就意味着 DTALC 本身必须扩充成高阶的：
 
@@ -262,24 +246,24 @@ data HFree sig a = HPure a | HImpure (sig (HFree sig) (HFree sig a))
 data (f :+ g) sig a = Inl (f sig a) | Inr (g sig a)
 ```
 
-`HFree sig` 本身应该是个 monad，但 Functor 已经无法直接定义出来了：
+`HFree sig` 本身应该是个 monad，但注意， `Functor` 已经无法直接定义出来了：
 
 ```haskell
 instance Functor (HFree sig) where
   fmap f (HPure a)    = HPure (f a)
   fmap f (HImpure op) = HImpure _hole
 --  _hole :: sig (HFree sig) (HFree sig b)
--- 注意 sig kind 是 * -> * -> * 所以一定不是 Functor
 ```
 
-这提示 sig 缺了一些性质。我们不妨把这种 “内层 functor” 可变的东西叫 HFunctor：
+这提示 `sig` 缺了一些性质。我们不妨把这种 “内层 functor” 可变的东西叫 `HFunctor`：
 
 ```haskell
 -- | “高阶” functor
--- sig 的 kind 是 * -> * -> * 而不是 * -> *
 class HFunctor sig where
   hmap :: (forall x. f x -> g x) -> (a -> b) -> sig f a -> sig g b
 ```
+
+至于 `hmap` 的直观意义，可参见末节。
 
 有了它之后就可以定义 functor、applicative 和 monad 了：
 
@@ -401,12 +385,7 @@ done
 
 dtalc 样板代码只需复制粘贴即可，但对好奇的读者来说，上面的讨论中主要诉诸于直觉和类型制导，但依然非常难以理解。这里尝试用 ~~抽象废话~~ 范畴论解释一下，或许还更好理解一点（并不）。
 
-我们已经知道 DTALC 本身是在组合函子，那么高阶 DTALC 肯定也在组合些什么。如果仔细观察一下 `BaseF`：
-
-- `BaseF sig1` 是个函子，而 `sig1` 本身是个函子
-- `BaseF sig2` 是个函子，而 `sig2` 本身是个函子
-
-这就意味着，`BaseF` 本身是个从函子到函子的映射，或者也可以叫做 functor transformer，类比 `Free` 把 functor 映成一个 monad（也是函子）。在高阶 dtalc 中，不组合 functor，而是组合 functor transformer。
+我们已经知道 DTALC 本身是在组合函子，那么高阶 DTALC 肯定也在组合些什么。如果仔细观察一下 `BaseF`：对于任意函子 `f`，`BaseF f` 也是个函子。这就意味着，`BaseF` 本身是个从函子到函子的映射，或者也可以叫做 functor transformer。可以类比 `Free` 把 functor 映成一个 monad（也是函子）。因此，高阶 dtalc 不组合 functor，而是组合 functor transformer。
 
 考虑范畴 \\(Hask\\) 及其自函子范畴。`BaseF` 把自函子映为另一个自函子，即 `BaseF` 是自函子范畴上的自函子。`BaseF` 如果是函子，它必然可以映射函子范畴上的态射（即自然变换），即函子 f 到 g 的自然变换被映为 `BaseF(f)` 到 `BaseF(g)` 的自然变换。这恰好对应于 `HFunctor`：将自然变换 `f ~> g` 映射到 `(a -> b) -> sig f a -> sig g b`。
 
