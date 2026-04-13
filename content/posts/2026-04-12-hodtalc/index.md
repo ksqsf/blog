@@ -209,7 +209,7 @@ data TestF sig k where
 
 ## 高阶 DTALC
 
-由于上述两个办法都走不通，不得不考虑一个更合理的办法。最好是能同时处理 k 和 sig 两个 open recursion。
+由于上述两个办法都走不通，不得不考虑一个更合理的办法。最好是能同时处理 k 和 sig 两个类型参数。
 
 我们回头重新思考一下 DTALC 到底在做什么：
 
@@ -224,8 +224,8 @@ data TestF sig k where
 
 ```haskell
 data BaseF f k where
-  If    :: Expr Bool -> (f ()) -> (f ()) -> k -> BaseF sig k
-  While :: Expr Bool -> (f ()) -> (f ()) -> BaseF sig k
+  If    :: Expr Bool -> (f ()) -> (f ()) -> k -> BaseF f k
+  While :: Expr Bool -> (f ()) -> (f ()) -> BaseF f k
 data ConcF f k where
   Fork :: [f ()] -> k -> ConcF f k
 data TestF f k where
@@ -263,7 +263,7 @@ instance Functor (sig (HFree sig)) => Functor (HFree sig) where
   fmap f (HImpure op) = HImpure $ fmap (fmap f) op
 ```
 
-但是这样的问题在于我们不知道 dtalc 组合的 `f :+ g` 到底是什么东西——它本身并不是个 Functor，我们只能讨论 `instance Functor (HFree (f :+ g))`，这会和之前的 `instance Functor (HFree sig)` 重叠。总之，这也是条死路。
+这样做的问题在于我们不知道 dtalc 组合的 `f :+ g` 到底是什么东西——它本身并不是个 Functor，我们只能讨论 `instance Functor (HFree (f :+ g))`，这会和之前的 `instance Functor (HFree sig)` 重叠。总之，这也是条死路。
 
 但上面的探索提示我们 `sig` 本身具有某种性质，两个 sig 组合起来依然具有这种性质。具体是什么性质呢？考虑 `BaseF f a` 和 `BaseF (f :+ g) b`，我们希望 `BaseF` 命令形状不变，但 `f` 总是可以注入到 `f :+ g` 里。换句话说，第二个参数应该是可以换的。我们不妨把这种 “内层 functor” 可替换的东西叫 `HFunctor`：
 
