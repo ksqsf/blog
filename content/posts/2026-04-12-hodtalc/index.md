@@ -205,7 +205,7 @@ data TestF sig k where
   AnyIO :: IO () -> k -> TestF sig k
 ```
 
-遗憾的是，这个做法也行不通。至于为什么，留作读者练习。（难点在于最终合成语言，因为你需要把 sig Fix 起来。）
+遗憾的是，这个做法也行不通。至于为什么，留作读者练习。（提示：难点在于最终合成语言，因为你需要把 sig Fix 起来。）
 
 ## 高阶 DTALC
 
@@ -238,7 +238,7 @@ data TestF f k where
 data HFree sig a = HPure a | HImpure (sig (HFree sig) (HFree sig a))
 ```
 
-这里需要注意 `sig` 本身不是 Functor，它的 kind 是 `* -> * -> *`。
+这里需要注意 `sig` 本身不是 Functor，它的 kind 是 `* -> * -> *`，而 `HFree sig` 我们希望是个 monad，即 `HFree` 把 `sig` 的两个类型参数都封锁在了里面。
 
 同时我们还想继续保留 `(BaseF :< sig, TestF :< sig)` 这种写法，也就意味着 DTALC 本身必须扩充成高阶的：
 
@@ -255,15 +255,26 @@ instance Functor (HFree sig) where
 --  _hole :: sig (HFree sig) (HFree sig b)
 ```
 
-这提示 `sig` 缺了一些性质。我们不妨把这种 “内层 functor” 可变的东西叫 `HFunctor`：
+这里我们可以尝试强行定义，因为 `HFree sig` 是 Functor，`sig (HFree sig)` 看起来也像个 functor，那当然：
+
+```haskell
+instance Functor (sig (HFree sig)) => Functor (HFree sig) where
+  fmap f (HPure a)    = HPure (f a)
+  fmap f (HImpure op) = HImpure $ fmap (fmap f) op
+```
+
+但是这样的问题在于我们不知道 dtalc 组合的 `f :+ g` 到底是什么东西——它本身并不是个 Functor，我们只能讨论 `instance Functor (HFree (f :+ g))`，这会和之前的 `instance Functor (HFree sig)` 重叠。总之，这也是条死路。
+
+但上面的探索提示我们 `sig` 本身具有某种性质，两个 sig 组合起来依然具有这种性质。具体是什么性质呢？考虑 `BaseF f a` 和 `BaseF (f :+ g) b`，我们希望 `BaseF` 命令形状不变，但 `f` 总是可以注入到 `f :+ g` 里。换句话说，第二个参数应该是可以换的。我们不妨把这种 “内层 functor” 可替换的东西叫 `HFunctor`：
 
 ```haskell
 -- | “高阶” functor
 class HFunctor sig where
   hmap :: (forall x. f x -> g x) -> (a -> b) -> sig f a -> sig g b
+-- 第一个参数可理解为函子 f 到函子 g 的自然变换
 ```
 
-至于 `hmap` 的直观意义，可参见末节。
+`HFunctor` 表明：只要我们可以把 `f` 注入到 `f :+ g` 里，就可以把 `BaseF f` 转换成 `BaseF (f :+ g)`。这里的定义更宽泛一点。
 
 有了它之后就可以定义 functor、applicative 和 monad 了：
 
@@ -281,9 +292,9 @@ instance HFunctor sig => Monad (HFree sig) where
   HImpure op >>= k = HImpure (hmap id (>>= k) 
 ```
 
-`HFree` 的直觉是：`sig` 代表命令的形状，`HFree sig` 代表程序的形状。
+`HFree` 的直觉和 `Free` 相同：`sig` 代表命令的形状，`HFree sig` 代表程序的形状。
 
-有了这些基础设施，就可以定义 DTALC 的样板了：
+现在可以定义 DTALC 的样板了：
 
 ```haskell
 data (f :+ g) sig a = Inl (f sig a) | Inr (g sig a)
@@ -303,7 +314,7 @@ instance {-# OVERLAPPABLE #-} (HFunctor h, f :< g) => f :< (h :+ g) where
   inj = Inr . inj
 ```
 
-然后重写之前的语言，虽然 HFunctor 写起来很机械，但还是要手写：
+然后重写之前的语言，虽然 `HFunctor` 写起来很机械，但还是要手写：
 
 ```haskell
 data BaseF f k where
