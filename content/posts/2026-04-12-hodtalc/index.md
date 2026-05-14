@@ -271,7 +271,7 @@ instance Functor (sig (HFree sig)) => Functor (HFree sig) where
 -- | “高阶” functor
 class HFunctor sig where
   hmap :: (forall x. f x -> g x) -> (a -> b) -> sig f a -> sig g b
--- 第一个参数可理解为函子 f 到函子 g 的自然变换
+-- 第一个参数可理解为函子 f 到函子 g 的自然变换，所以也可以写成：
 ```
 
 `HFunctor` 表明：只要我们可以把 `f` 注入到 `f :+ g` 里，就可以把 `BaseF f` 转换成 `BaseF (f :+ g)`。这里的定义更宽泛一点。
