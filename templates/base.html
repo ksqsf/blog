@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="{% if lang == "en" %}en{% else %}zh-Hans{% endif %}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
         <link rel="icon" href="{{ config.extra.favicon }}">
 
         <!-- Feed -->
-        <link type="application/atom+xml" rel="alternate" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" title="/home/ksqsf">
+        <link type="application/rss+xml" rel="alternate" href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}" title="/home/ksqsf">
 
         {% block head %}
         {% endblock %}
@@ -22,17 +22,17 @@
 
     <body>
         <header class="site-header">
-            <a class="site-title" href="/">/home/ksqsf</a>
+            <a class="site-title" href="{{ get_url(path="", lang=lang) }}">/home/ksqsf</a>
             <nav class="site-nav">
                 <ul>
-                    <li><a class="page-link" href="/posts/">Posts</a></li>
-                    <li><a class="page-link" href="/about/">About</a></li>
-                    <li><a class="page-link" href="/links/">Links</a></li>
+                    <li><a class="page-link" href="{{ get_url(path="posts", lang=lang) }}">Posts</a></li>
+                    <li><a class="page-link" href="{{ get_url(path="about", lang=lang) }}">About</a></li>
+                    <li><a class="page-link" href="{{ get_url(path="links", lang=lang) }}">Links</a></li>
                 </ul>
             </nav>
         </header>
 
-        <main aria-label="Content" lang="zh-Hans">
+        <main aria-label="Content" lang="{% if lang == "en" %}en{% else %}zh-Hans{% endif %}">
             {% block content %}
             {% endblock %}
         </main>
@@ -40,7 +40,7 @@
 
     <footer class="site-footer">
         {% block footer %}
-            <small><a href="{{ get_url(path="atom.xml", trailing_slash=false) }}">Feed</a></small>
+            <small><a href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}">RSS</a></small>
         {% endblock %}
     </footer>
 </html>

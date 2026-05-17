@@ -9,7 +9,8 @@
 }
 $monospace: NekoMono, Iosevka, Menlo, Consolas, monospace;
 $sans-serif: "PT Sans","Avenir Next","Segoe UI",Helvetica,"Helvetica Neue",Arial,"Han Heiti GB",sans-serif;
-$serif: Martina Plantijn, Charter, "方正FW筑紫明朝R改",
+$serif: Martina Plantijn, "Source Serif 4", Charter, Cambria, Georgia,
+        "Palatino Linotype", "Book Antiqua", "方正FW筑紫明朝R改",
         "Noto Sans CJK TC", "Microsoft YaHei", "DengXian",
         ui-serif, serif;
 
@@ -174,6 +175,10 @@ code[class^="language-"] {
         color: #9cab9c;
     }
 
+    .post-link {
+        font-family: $serif;
+    }
+
     .headline {
         font-family: $serif;
     }
@@ -220,6 +225,15 @@ main header {
         color: #999;
         font-family: $sans-serif;
         text-align: center;
+
+        a {
+            color: #777;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #000;
+        }
     }
 }
 

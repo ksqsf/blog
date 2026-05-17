@@ -31,7 +31,8 @@ jobs:
 
     - name: Preserve old links
       run: |
-        cp ./public/atom.xml ./public/index.xml
+        cp ./public/rss.xml ./public/atom.xml
+        cp ./public/rss.xml ./public/index.xml
 
     - name: Deploy
       run: |

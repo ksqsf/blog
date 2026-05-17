@@ -25,7 +25,7 @@
         <meta name="description" content="{{ page.summary | striptags | trim }}">
         <meta name="og:description" content="{{ page.summary | striptags | trim }}">
     {% endif %}
-    <meta property="og:locale" content="zh_CN">
+    <meta property="og:locale" content="{% if lang == "en" %}en_US{% else %}zh_CN{% endif %}">
     <meta property="article:author" content="{{ config.author }}">
     {% if page.date %}
         <meta property="article:published_time" content="{{ page.date }}">
@@ -45,10 +45,18 @@
                     <span itemprop="author name" itemscope itemtype="http://schema.org/Person">ksqsf</span>
                     ・
                     <time class="dt-published" datetime="{{ page.date }}" itemprop="datePublished">{{ page.date | date(format="%Y-%m-%d") }}</time>
+                    {% if page.translations | length > 1 %}
+                        {% for translation in page.translations %}
+                            {% if translation.lang != lang %}
+                                ・
+                                <a class="translation-link" href="{{ translation.permalink }}" hreflang="{{ translation.lang }}" lang="{{ translation.lang }}">[{{ translation.lang }}]</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </p>
             {% endif %}
         </header>
-        <div class="page-content {% if page.extra.chinese %}chinese{% endif %}" itemprop="articleBody">
+        <div class="page-content {% if lang != "en" %}chinese{% endif %}" itemprop="articleBody">
             {{ page.content | safe }}
         </div>
 
@@ -65,7 +73,7 @@
                     data-emit-metadata="0"
                     data-input-position="bottom"
                     data-theme="light"
-                    data-lang="zh-CN"
+                    data-lang="{% if lang == "en" %}en{% else %}zh-CN{% endif %}"
                     crossorigin="anonymous"
                     async>
             </script>
