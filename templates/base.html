@@ -39,8 +39,8 @@
     </body>
 
     <footer class="site-footer">
+        <small><a href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}">RSS</a></small>
         {% block footer %}
-            <small><a href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}">RSS</a></small>
         {% endblock %}
     </footer>
 </html>
