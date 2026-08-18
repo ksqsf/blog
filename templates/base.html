@@ -4,9 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        {% block title %}
-            <title>/home/ksqsf</title>
-        {% endblock %}
+{% block title %}<title>/home/ksqsf</title>{% endblock %}
 
         <link rel="stylesheet" href="{{ get_url(path="main.css", trailing_slash=false) }}">
 
@@ -16,8 +14,7 @@
         <!-- Feed -->
         <link type="application/rss+xml" rel="alternate" href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}" title="/home/ksqsf">
 
-        {% block head %}
-        {% endblock %}
+{% block head %}{% endblock %}
     </head>
 
     <body>
@@ -33,14 +30,11 @@
         </header>
 
         <main aria-label="Content" lang="{% if lang == "en" %}en{% else %}zh-Hans{% endif %}">
-            {% block content %}
-            {% endblock %}
+{% block content %}{% endblock %}
         </main>
+        <footer class="site-footer">
+            <small><a href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}">RSS</a></small>
+{% block footer %}{% endblock %}
+        </footer>
     </body>
-
-    <footer class="site-footer">
-        <small><a href="{{ get_url(path="rss.xml", lang=lang, trailing_slash=false) }}">RSS</a></small>
-        {% block footer %}
-        {% endblock %}
-    </footer>
 </html>

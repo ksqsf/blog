@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% set lifeH = 30 %}
-    {% set lifeW = 40 %}
-
+{% set lifeH = 30 %}
+{% set lifeW = 40 %}
     <style>
      table.life {
          width: {{ lifeW }}em;
@@ -97,17 +96,17 @@
      window.onload = life_setup;
     </script>
     <table class="life">
-        {% for i in range(end=lifeH) -%}
+        <tbody>
+{% for i in range(end=lifeH) -%}
             <tr>
-                {% for j in range(end=lifeW) -%}
-                    <td id="cell-{{i}}-{{j}}" onclick="inverse({{i}},{{j}})" bgcolor="white"></td>
-                {% endfor -%}
+{% for j in range(end=lifeW) -%}
+                    <td id="cell-{{i}}-{{j}}" onclick="inverse({{i}},{{j}})"></td>
+{% endfor -%}
             </tr>
-        {% endfor -%}
+{% endfor -%}
+        </tbody>
     </table>
     <!-- Dedicated to John Conway -->
 {% endblock %}
 
-
-{% block footer %}
-{% endblock %}
+{% block footer %}{% endblock %}
