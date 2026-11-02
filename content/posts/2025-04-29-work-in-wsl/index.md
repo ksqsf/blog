@@ -41,6 +41,10 @@ comment = true
 
 我对 WezTerm 的配置比较简单，不过值得一提的是 Emacs 在终端下 **无法接收到一些按键** ，如 `C-TAB`，但我们可以在 WezTerm 里把这个键绑定为「发送字符串到终端程序」，从而曲线救国：
 
+<aside>
+Emacs 32 以来支持了 Kitty Keyboard Protocol，系统性地解决了这个问题。WezTerm 中开启 `enable_kitty_keyboard = true` 即可，不再需要本节介绍的技巧。
+</aside>
+
 ```lua
 return {
    keys = {
